@@ -19,7 +19,7 @@ void main() {
 
     test('transact() executes code', () {
       final doc = SynkDoc(clientId: 1);
-      bool ran = false;
+      var ran = false;
 
       doc.transact((txn) {
         expect(txn.doc, equals(doc));
