@@ -1,0 +1,13 @@
+name: synk
+description: A Shared Editing Library based on CRDTs.
+version: 0.1.0-dev.1
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"
+
+dependencies:
+  meta: ^1.18.2
+
+dev_dependencies:
+  mocktail: ^1.0.4
+  test: ^1.30.0
