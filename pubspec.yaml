@@ -1,6 +1,6 @@
 name: synk
 description: A Shared Editing Library based on CRDTs.
-version: 0.1.0-dev.1
+version: 0.1.0-dev.2
 repository: https://github.com/justsandip/synk
 issue_tracker: https://github.com/justsandip/synk/issues
 homepage: https://github.com/justsandip/synk
