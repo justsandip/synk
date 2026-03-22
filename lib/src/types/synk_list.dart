@@ -56,7 +56,7 @@ class SynkList {
       final deferred = <Item>[];
       for (final item in pending) {
         final canIntegrate =
-            item.leftOrigin == null || _integrated.contains(item.leftOrigin!);
+            item.leftOrigin == null || _integrated.contains(item.leftOrigin);
         if (canIntegrate) {
           _integrate(item);
         } else {
