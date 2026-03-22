@@ -1,6 +1,6 @@
 name: synk
-description: A Shared Editing Library based on CRDTs.
-version: 0.1.0-dev.2
+description: An offline-first, conflict-free, shared editing library for Dart.
+version: 0.1.0-dev.3
 repository: https://github.com/justsandip/synk
 issue_tracker: https://github.com/justsandip/synk/issues
 homepage: https://github.com/justsandip/synk

@@ -8,8 +8,6 @@
 
 Synk is an offline-first conflict-free shared editing library for Dart. Multiple peers can edit the same data at the same time and always end up with exactly the same result, without any server deciding who is right.
 
----
-
 ## Installation
 
 Add the dependency to your `pubspec.yaml`:
@@ -22,8 +20,6 @@ dart pub add synk
 dependencies:
   synk: <current-synk-version>
 ```
-
----
 
 ## Core Concepts
 
@@ -47,8 +43,6 @@ Each doc gets a random `clientId` automatically. You can also supply a fixed one
 final doc = SynkDoc(clientId: 42);
 ```
 
----
-
 ## Shared Types
 
 All shared types are attached to a `SynkDoc` with a unique `name` key. Two peers using the same name on docs sharing the same history will always converge to the same value.
@@ -69,7 +63,22 @@ map.toMap();               // {}
 
 > Full example - [`example/synk_example.dart`](example/synk_example.dart)
 
----
+### `SynkList`
+
+A collaborative list that supports append, insert, and delete operations. Concurrent operations are resolved deterministically using a causal ordering algorithm.
+
+```dart
+final list = SynkList(doc, 'items');
+
+list.append('a');
+list.insert(0, 'b');
+list.toList(); // ['b', 'a']
+
+list.delete(1);
+list.toList(); // ['b']
+```
+
+> Full example - [`example/synk_list_example.dart`](example/synk_list_example.dart)
 
 ### `SynkInt`
 
@@ -86,8 +95,6 @@ counter.value;           // 8
 
 > Full example - [`example/synk_int_example.dart`](example/synk_int_example.dart)
 
----
-
 ### `SynkString`
 
 A single-value string register. Concurrent writes are resolved deterministically via LWW — the write with the higher logical clock wins. If clocks tie, the higher `clientId` wins.
@@ -100,8 +107,6 @@ title.value; // 'Hello, World!'
 ```
 
 > Full example - [`example/synk_string_example.dart`](example/synk_string_example.dart)
-
----
 
 ### `SynkBool`
 
@@ -117,8 +122,6 @@ flag.value; // false
 
 > Full example - [`example/synk_bool_example.dart`](example/synk_bool_example.dart)
 
----
-
 ### `SynkDouble`
 
 Same LWW semantics as `SynkString`. JSON-safe: integer payloads from the wire are cast to `double` transparently.
@@ -131,8 +134,6 @@ price.value; // 9.99
 ```
 
 > Full example - [`example/synk_double_example.dart`](example/synk_double_example.dart)
-
----
 
 ## Syncing Between Peers
 
@@ -161,8 +162,6 @@ SynkProtocol.applyUpdate(newPeerDoc, fullUpdate);
 `applyUpdate` is **idempotent** — applying the same update twice is always safe.
 
 > Full multi-peer example with deletions and a late-joining peer - [`example/synk_example.dart`](example/synk_example.dart)
-
----
 
 ## License
 
