@@ -23,11 +23,19 @@ dependencies:
 
 ## Core Concepts
 
-Synk is built around three ideas:
+Synk is built around these ideas:
 
-- `SynkDoc` represents your local replica of the shared document. Each peer has their own.
-- `SynkMap`, `SynkBool`, `SynkDouble`, `SynkInt`, `SynkString` are the collaborative data structures you attach to a doc.
-- `SynkProtocol` is the sync layer that computes minimal binary deltas between peers.
+- [SynkDoc](#creating-a-document) represents your local replica of the shared document. Each peer has their own.
+- [SynkProtocol](#syncing-between-peers) is the sync layer that computes minimal binary deltas between peers.
+
+The collaborative data structures you attach to a doc are:
+
+- [SynkMap](#synkmap)
+- [SynkList](#synklist)
+- [SynkInt](#synkint)
+- [SynkString](#synkstring)
+- [SynkBool](#synkbool)
+- [SynkDouble](#synkdouble)
 
 ### Creating a document
 
