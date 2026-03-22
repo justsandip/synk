@@ -1,3 +1,8 @@
+# 0.1.0-dev.3
+
+* feat: added `SynkList` for collaborative list operations
+* docs: added example for `SynkList`
+
 # 0.1.0-dev.2
 
 * feat: added `SynkBool`, `SynkDouble`, `SynkInt`, and `SynkString` for basic data types
