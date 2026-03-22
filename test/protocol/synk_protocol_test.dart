@@ -112,4 +112,37 @@ void main() {
     expect(doc2.store[1]!.first.content, equals('root-level-data'));
     expect(doc2.store[1]!.first.parentKey, isNull);
   });
+
+  test('encodes and decodes items with rightOrigin and leftOrigin', () {
+    final docA = SynkDoc(clientId: 1);
+
+    // Create a manual item that has both origins populated
+    final itemWithOrigins = Item(
+      id: ID(1, 0),
+      parentKey: 'some-key',
+      leftOrigin: ID(1, 100), // Triggers leftOrigin branch
+      rightOrigin: ID(1, 101), // Triggers rightOrigin branch (Line 112-117)
+      content: 'test-content',
+      deleted: false,
+    );
+
+    // Inject it into the doc
+    docA.transact((txn) {
+      docA.addItem(itemWithOrigins);
+      docA.stateVector.set(1, 1);
+    });
+
+    // 1. Test Encoding (Hits the first block)
+    final update = SynkProtocol.encodeStateAsUpdate(docA);
+
+    // 2. Test Decoding (Hits the second block: Line 166-169)
+    final docB = SynkDoc(clientId: 2);
+    SynkProtocol.applyUpdate(docB, update);
+
+    // Verify the data survived the round-trip
+    final receivedItem = docB.store[1]!.first;
+    expect(receivedItem.leftOrigin?.clock, equals(100));
+    expect(receivedItem.rightOrigin?.clock, equals(101));
+    expect(receivedItem.rightOrigin?.client, equals(1));
+  });
 }

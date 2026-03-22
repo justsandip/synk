@@ -10,6 +10,7 @@ export 'src/structs/item.dart';
 export 'src/types/synk_bool.dart';
 export 'src/types/synk_double.dart';
 export 'src/types/synk_int.dart';
+export 'src/types/synk_list.dart';
 export 'src/types/synk_map.dart';
 export 'src/types/synk_string.dart';
 export 'src/utils/decoder.dart';

@@ -99,6 +99,26 @@ class SynkProtocol {
           encoder.writeUint8(0);
         }
 
+        // Write leftOrigin (1 byte flag + clientId + clock if present)
+        if (item.leftOrigin != null) {
+          encoder
+            ..writeUint8(1)
+            ..writeUint32(item.leftOrigin!.client)
+            ..writeUint32(item.leftOrigin!.clock);
+        } else {
+          encoder.writeUint8(0);
+        }
+
+        // Write rightOrigin (1 byte flag + clientId + clock if present)
+        if (item.rightOrigin != null) {
+          encoder
+            ..writeUint8(1)
+            ..writeUint32(item.rightOrigin!.client)
+            ..writeUint32(item.rightOrigin!.clock);
+        } else {
+          encoder.writeUint8(0);
+        }
+
         // Write content as JSON
         encoder
           ..writeJson(item.content)
@@ -131,12 +151,26 @@ class SynkProtocol {
             parentKey = decoder.readString();
           }
 
+          final hasLeftOrigin = decoder.readUint8() == 1;
+          ID? leftOrigin;
+          if (hasLeftOrigin) {
+            leftOrigin = ID(decoder.readUint32(), decoder.readUint32());
+          }
+
+          final hasRightOrigin = decoder.readUint8() == 1;
+          ID? rightOrigin;
+          if (hasRightOrigin) {
+            rightOrigin = ID(decoder.readUint32(), decoder.readUint32());
+          }
+
           final content = decoder.readJson();
           final isDeleted = decoder.readUint8() == 1;
 
           final item = Item(
             id: ID(client, clock),
             parentKey: parentKey,
+            leftOrigin: leftOrigin,
+            rightOrigin: rightOrigin,
             content: content,
             deleted: isDeleted,
           );
