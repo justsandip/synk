@@ -1,3 +1,7 @@
+# 0.1.0-dev.4
+
+* fix(deps): downgrade meta to ^1.17.0 for flutter compatibility
+
 # 0.1.0-dev.3
 
 * feat: added `SynkList` for collaborative list operations
