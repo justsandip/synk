@@ -8,6 +8,8 @@
 
 Synk is an offline-first conflict-free shared editing library for Dart. Multiple peers can edit the same data at the same time and always end up with exactly the same result, without any server deciding who is right.
 
+<img src="./assets/synk_demo.gif" width="600" alt="Synk Demo" />
+
 ## Installation
 
 Add the dependency to your `pubspec.yaml`:
