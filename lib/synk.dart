@@ -13,5 +13,6 @@ export 'src/types/synk_int.dart';
 export 'src/types/synk_list.dart';
 export 'src/types/synk_map.dart';
 export 'src/types/synk_string.dart';
+export 'src/types/synk_text.dart';
 export 'src/utils/decoder.dart';
 export 'src/utils/encoder.dart';
