@@ -1,3 +1,8 @@
+# 0.1.0-dev.5
+
+* docs: add a flutter demo app for showcase
+* docs(README): add a demo gif, minor revisions
+
 # 0.1.0-dev.4
 
 * fix(deps): downgrade meta to ^1.17.0 for flutter compatibility
