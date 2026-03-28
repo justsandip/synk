@@ -34,6 +34,9 @@ class SynkText {
   // used for safe topological replay of existing history.
   final Set<ID> _integrated = {};
 
+  // Cache for the length of the sequence (number of non-deleted characters).
+  int _length = 0;
+
   // ── Internals ────────────────────────────────────────────────────────────
 
   void _processItem(Item item) {
@@ -92,7 +95,10 @@ class SynkText {
     if (item.deleted) {
       if (item.leftOrigin != null) {
         final target = _findById(item.leftOrigin!);
-        target?.delete();
+        if (target != null && !target.deleted) {
+          target.delete();
+          _length--;
+        }
       }
       _integrated.add(item.id);
       return;
@@ -138,6 +144,7 @@ class SynkText {
       item.right!.left = item;
     }
 
+    _length++;
     _integrated.add(item.id);
   }
 
@@ -251,15 +258,7 @@ class SynkText {
   }
 
   /// The number of active (non-deleted) characters.
-  int get length {
-    var count = 0;
-    var current = _start;
-    while (current != null) {
-      if (!current.deleted) count++;
-      current = current.right;
-    }
-    return count;
-  }
+  int get length => _length;
 
   /// Returns the complete visible text string.
   String get text {
