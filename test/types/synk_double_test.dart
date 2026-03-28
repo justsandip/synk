@@ -74,5 +74,21 @@ void main() {
       final weight2 = SynkDouble(doc, 'weight');
       expect(weight2.value, equals(42.5));
     });
+
+    test('dispose() correctly unregisters listeners', () {
+      final doc = SynkDoc();
+      final weight = SynkDouble(doc, 'weight');
+
+      weight.set(42.5);
+      expect(weight.value, equals(42.5));
+
+      weight.dispose();
+
+      // This update should NOT be processed by the disposed map
+      weight.set(100);
+
+      // It should still have the old value because the listener was removed
+      expect(weight.value, equals(42.5));
+    });
   });
 }

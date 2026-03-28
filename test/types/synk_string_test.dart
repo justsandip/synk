@@ -57,5 +57,21 @@ void main() {
       final title2 = SynkString(doc, 'title');
       expect(title2.value, equals('Hello'));
     });
+
+    test('dispose() correctly unregisters listeners', () {
+      final doc = SynkDoc();
+      final title = SynkString(doc, 'title');
+
+      title.set('Hello');
+      expect(title.value, equals('Hello'));
+
+      title.dispose();
+
+      // This update should NOT be processed by the disposed map
+      title.set('Goodbye');
+
+      // It should still have the old value because the listener was removed
+      expect(title.value, equals('Hello'));
+    });
   });
 }

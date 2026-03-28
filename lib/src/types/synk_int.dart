@@ -10,20 +10,11 @@ import 'package:synk/synk.dart';
 class SynkInt {
   /// {@macro synk_int}
   SynkInt(this.doc, this.name) {
-    doc.listen((item) {
-      if (item.parentKey == name && item.content is int) {
-        _value += item.content as int;
-      }
-    });
-
+    doc.addListener(_processItem);
     // Compute initial value from existing items in case this type
     // is instantiated after items were already synced.
     for (final clientItems in doc.store.values) {
-      for (final item in clientItems) {
-        if (item.parentKey == name && item.content is int) {
-          _value += item.content as int;
-        }
-      }
+      clientItems.forEach(_processItem);
     }
   }
 
@@ -34,6 +25,17 @@ class SynkInt {
   final String name;
 
   int _value = 0;
+
+  void _processItem(Item item) {
+    if (item.parentKey == name && item.content is int) {
+      _value += item.content as int;
+    }
+  }
+
+  /// Disposes the [SynkInt] instance.
+  void dispose() {
+    doc.removeListener(_processItem);
+  }
 
   /// The current sum of all increments and decrements.
   int get value => _value;

@@ -16,12 +16,7 @@ class SynkList {
   ///
   /// Creates a new [SynkList] named [name] attached to [doc].
   SynkList(this.doc, this.name) {
-    doc.listen((item) {
-      if (item.parentKey == name) {
-        _integrate(item);
-      }
-    });
-
+    doc.addListener(_processItem);
     _replayExisting();
   }
 
@@ -39,6 +34,12 @@ class SynkList {
   final Set<ID> _integrated = {};
 
   // ── Internals ────────────────────────────────────────────────────────────
+
+  void _processItem(Item item) {
+    if (item.parentKey == name) {
+      _integrate(item);
+    }
+  }
 
   void _replayExisting() {
     // Collect all items that belong to this list.
@@ -154,6 +155,11 @@ class SynkList {
   }
 
   // ── Public API ────────────────────────────────────────────────────────────
+
+  /// Disposes the [SynkList] instance.
+  void dispose() {
+    doc.removeListener(_processItem);
+  }
 
   /// Inserts [value] at position [index] in the active (visible) list.
   ///

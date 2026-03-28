@@ -54,5 +54,18 @@ void main() {
       final flag2 = SynkBool(doc, 'isActive');
       expect(flag2.value, isTrue);
     });
+
+    test('dispose() correctly unregisters listeners', () {
+      final doc = SynkDoc();
+      final flag = SynkBool(doc, 'isActive');
+
+      flag.set(true);
+      expect(flag.value, isTrue);
+
+      flag.dispose();
+
+      flag.set(false);
+      expect(flag.value, isTrue);
+    });
   });
 }

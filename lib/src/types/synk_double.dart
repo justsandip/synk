@@ -8,19 +8,10 @@ import 'package:synk/synk.dart';
 class SynkDouble {
   /// {@macro synk_double}
   SynkDouble(this.doc, this.name) {
-    doc.listen((item) {
-      if (item.parentKey == name) {
-        _applyRemoteItem(item);
-      }
-    });
-
+    doc.addListener(_processItem);
     // Apply existing history
     for (final clientItems in doc.store.values) {
-      for (final item in clientItems) {
-        if (item.parentKey == name) {
-          _applyRemoteItem(item);
-        }
-      }
+      clientItems.forEach(_processItem);
     }
   }
 
@@ -31,6 +22,12 @@ class SynkDouble {
   final String name;
 
   Item? _activeItem;
+
+  void _processItem(Item item) {
+    if (item.parentKey == name) {
+      _applyRemoteItem(item);
+    }
+  }
 
   void _applyRemoteItem(Item item) {
     if (item.content is! num) return; // double or int
@@ -48,6 +45,11 @@ class SynkDouble {
     } else {
       _activeItem = item;
     }
+  }
+
+  /// Disposes the [SynkDouble] instance.
+  void dispose() {
+    doc.removeListener(_processItem);
   }
 
   /// Sets the register to a new [value].
