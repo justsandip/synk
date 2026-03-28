@@ -54,5 +54,44 @@ void main() {
       map.set('conflict', 'second');
       expect(map.get('conflict'), equals('second'));
     });
+
+    test('delete() syncs correctly across peers', () {
+      final docA = SynkDoc(clientId: 1);
+      final docB = SynkDoc(clientId: 2);
+
+      final mapA = SynkMap(docA);
+      final mapB = SynkMap(docB);
+
+      mapA.set('key', 'value');
+
+      // Sync Alice -> Bob
+      SynkProtocol.applyUpdate(
+        docB,
+        SynkProtocol.encodeStateAsUpdate(docA),
+      );
+      expect(mapB.get('key'), equals('value'));
+
+      // Alice deletes 'key'
+      mapA.delete('key');
+      expect(mapA.containsKey('key'), isFalse);
+
+      // Sync Alice -> Bob again
+      SynkProtocol.applyUpdate(
+        docB,
+        SynkProtocol.encodeStateAsUpdate(
+          docA,
+          SynkProtocol.encodeStateVector(docB),
+        ),
+      );
+
+      // Bob should now also have 'key' deleted.
+      // THIS WILL FAIL because the delete isn't emitted as a new Item.
+      expect(
+        mapB.containsKey('key'),
+        isFalse,
+        reason: 'Bob should have received the deletion update',
+      );
+      expect(mapB.get('key'), isNull);
+    });
   });
 }

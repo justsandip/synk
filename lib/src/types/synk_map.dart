@@ -91,11 +91,17 @@ class SynkMap {
     doc.transact((txn) {
       final existingItem = _data[key];
       if (existingItem != null && !existingItem.deleted) {
-        existingItem.delete();
-        // Optionally, we could generate a new item with `content = null` and
-        // `deleted = true` to properly replicate the deletion across peers as
-        // an operation. For now, tombstoning the local item acts as the
-        // bare-minimum local delete.
+        // Emit a delete marker: an item with deleted = true whose leftOrigin
+        // points to the target. When integrated on any peer, it tombstones
+        // the target, making the delete operation fully replicable.
+        final marker = Item(
+          id: txn.getNextId(),
+          parentKey: key,
+          content: null,
+          leftOrigin: existingItem.id,
+          deleted: true,
+        );
+        doc.addItem(marker);
       }
     });
   }
