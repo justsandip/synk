@@ -33,6 +33,9 @@ class SynkList {
   // used for safe topological replay of existing history.
   final Set<ID> _integrated = {};
 
+  // Cache for the length of the list (number of non-deleted items).
+  int _length = 0;
+
   // ── Internals ────────────────────────────────────────────────────────────
 
   void _processItem(Item item) {
@@ -91,7 +94,10 @@ class SynkList {
     if (item.deleted) {
       if (item.leftOrigin != null) {
         final target = _findById(item.leftOrigin!);
-        target?.delete();
+        if (target != null && !target.deleted) {
+          target.delete();
+          _length--;
+        }
       }
       _integrated.add(item.id);
       return;
@@ -137,6 +143,7 @@ class SynkList {
       item.right!.left = item;
     }
 
+    _length++;
     _integrated.add(item.id);
   }
 
@@ -243,15 +250,7 @@ class SynkList {
   }
 
   /// The number of non-deleted elements.
-  int get length {
-    var count = 0;
-    var current = _start;
-    while (current != null) {
-      if (!current.deleted) count++;
-      current = current.right;
-    }
-    return count;
-  }
+  int get length => _length;
 
   /// Returns all non-deleted values as an ordered [List].
   List<dynamic> toList() {
