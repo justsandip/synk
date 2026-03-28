@@ -34,6 +34,7 @@ The collaborative data structures you attach to a doc are:
 
 - [SynkMap](#synkmap)
 - [SynkList](#synklist)
+- [SynkText](#synktext)
 - [SynkInt](#synkint)
 - [SynkString](#synkstring)
 - [SynkBool](#synkbool)
@@ -89,6 +90,21 @@ list.toList(); // ['b']
 ```
 
 > Full example - [`example/synk_list_example.dart`](example/synk_list_example.dart)
+
+### `SynkText`
+
+A collaborative text editor that supports concurrent edits from multiple peers. It uses a character-level sequence CRDT that preserves all insertions and deletions, even when they happen at the same position.
+
+```dart
+final text = SynkText(doc, 'content');
+
+text.append('Hello');
+text.insert(5, ', World!'); // "Hello, World!"
+text.delete(0, 6);          // "World!"
+text.text;                  // "World!"
+```
+
+> Full example - [`example/synk_text_example.dart`](example/synk_text_example.dart)
 
 ### `SynkInt`
 
