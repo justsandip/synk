@@ -1,3 +1,8 @@
+# 0.1.0-dev.7
+
+* fix(SynkMap): delete syncs correctly across peers ([#12](https://github.com/justsandip/synk/pull/12))
+* fix(SynkMap): add name, isolate listener ([#14](https://github.com/justsandip/synk/pull/14))
+
 # 0.1.0-dev.6
 
 * feat: added `SynkText` for collaborative text editing (character-level sequence CRDT)
