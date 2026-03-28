@@ -7,7 +7,7 @@ void main() {
   group('SynkMap', () {
     test('can set and get values', () {
       final doc = SynkDoc();
-      final map = SynkMap(doc);
+      final map = SynkMap(doc, 'myMap');
 
       map.set('color', 'red');
       expect(map.get('color'), equals('red'));
@@ -18,7 +18,7 @@ void main() {
 
     test('toMap() returns all active entries', () {
       final doc = SynkDoc();
-      final map = SynkMap(doc);
+      final map = SynkMap(doc, 'myMap');
 
       map.set('a', 1);
       map.set('b', 2);
@@ -28,7 +28,7 @@ void main() {
 
     test('delete() removes the value locally', () {
       final doc = SynkDoc();
-      final map = SynkMap(doc);
+      final map = SynkMap(doc, 'myMap');
 
       map.set('key', 'value');
       expect(map.containsKey('key'), isTrue);
@@ -41,7 +41,7 @@ void main() {
     test('LWW rule applies properly (manual conflict simulation)', () {
       // Create a doc simulating Client A
       final doc = SynkDoc(clientId: 1);
-      final map = SynkMap(doc);
+      final map = SynkMap(doc, 'myMap');
 
       // We bypass `set` to manually inject conflicting items for
       // testing the LWW rule.
@@ -59,8 +59,8 @@ void main() {
       final docA = SynkDoc(clientId: 1);
       final docB = SynkDoc(clientId: 2);
 
-      final mapA = SynkMap(docA);
-      final mapB = SynkMap(docB);
+      final mapA = SynkMap(docA, 'myMap');
+      final mapB = SynkMap(docB, 'myMap');
 
       mapA.set('key', 'value');
 
@@ -92,6 +92,46 @@ void main() {
         reason: 'Bob should have received the deletion update',
       );
       expect(mapB.get('key'), isNull);
+    });
+
+    test('replays history correctly upon creation', () {
+      final doc = SynkDoc(clientId: 1);
+
+      // Simulate existing items in document before map is instantiated.
+      doc.transact((txn) {
+        final item1 = Item(
+          id: txn.getNextId(),
+          parentKey: 'settings:theme',
+          content: 'dark',
+        );
+        doc.addItem(item1);
+
+        final item2 = Item(
+          id: txn.getNextId(),
+          parentKey: 'settings:fontSize',
+          content: 14,
+        );
+        doc.addItem(item2);
+      });
+
+      final map = SynkMap(doc, 'settings');
+      expect(map.get('theme'), equals('dark'));
+      expect(map.get('fontSize'), equals(14));
+    });
+
+    test('does not interfere with other types (e.g. SynkText)', () {
+      final doc = SynkDoc();
+      final map = SynkMap(doc, 'settings');
+      final text = SynkText(doc, 'body');
+
+      map.set('theme', 'light');
+      text.append('Hello');
+
+      // The map should NOT contain a key called 'body' just because
+      // a SynkText named 'body' was edited.
+      expect(map.containsKey('body'), isFalse);
+      expect(map.toMap(), equals({'theme': 'light'}));
+      expect(text.text, equals('Hello'));
     });
   });
 }

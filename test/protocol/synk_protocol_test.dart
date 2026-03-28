@@ -9,14 +9,14 @@ void main() {
     test('two simulated clients can sync their state', () {
       // 1. Client A creates a document and makes changes
       final docA = SynkDoc(clientId: 1);
-      final mapA = SynkMap(docA);
+      final mapA = SynkMap(docA, 'config');
 
       mapA.set('username', 'alice');
       mapA.set('theme', 'dark');
 
       // 2. Client B creates an empty document
       final docB = SynkDoc(clientId: 2);
-      final mapB = SynkMap(docB);
+      final mapB = SynkMap(docB, 'config');
 
       // 3. Handshake protocol
       // Bob asks Alice for her updates by sending his empty State Vector
@@ -43,11 +43,11 @@ void main() {
     test('Conflict resolution over the network (LWW)', () {
       // Alice
       final docA = SynkDoc(clientId: 100);
-      final mapA = SynkMap(docA);
+      final mapA = SynkMap(docA, 'config');
 
       // Bob
       final docB = SynkDoc(clientId: 200); // Bob has higher client ID
-      final mapB = SynkMap(docB);
+      final mapB = SynkMap(docB, 'config');
 
       // Concurrent edits while offline!
       mapA.set('color', 'red');
@@ -72,11 +72,11 @@ void main() {
 
   test('encodeStateAsUpdate handles null remote state vector (Full Sync)', () {
     final docA = SynkDoc(clientId: 1);
-    final mapA = SynkMap(docA);
+    final mapA = SynkMap(docA, 'config');
     mapA.set('key', 'value'); // This creates an Item with a specific parentKey
 
     final docB = SynkDoc(clientId: 2);
-    final mapB = SynkMap(docB);
+    final mapB = SynkMap(docB, 'config');
 
     // Alice encodes everything
     final fullUpdate = SynkProtocol.encodeStateAsUpdate(docA, null);

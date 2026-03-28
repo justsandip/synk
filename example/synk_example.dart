@@ -12,9 +12,8 @@ void main() {
   final docAlice = SynkDoc(clientId: 1);
   final docBob = SynkDoc(clientId: 2);
 
-  // Attach a SynkMap to each document.
-  final mapAlice = SynkMap(docAlice);
-  final mapBob = SynkMap(docBob);
+  final mapAlice = SynkMap(docAlice, 'settings');
+  final mapBob = SynkMap(docBob, 'settings');
 
   // ── 2. Alice makes some edits ──
   mapAlice.set('title', 'Grocery List');
@@ -91,7 +90,7 @@ void main() {
 
   // ── 7. Add a third peer (Carol) and do a full sync ──
   final docCarol = SynkDoc(clientId: 3);
-  final mapCarol = SynkMap(docCarol);
+  final mapCarol = SynkMap(docCarol, 'settings');
 
   // Carol has nothing, so we send the full document from Alice.
   final fullUpdate = SynkProtocol.encodeStateAsUpdate(docAlice);
