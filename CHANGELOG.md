@@ -1,3 +1,8 @@
+# 0.1.0-dev.6
+
+* feat: added `SynkText` for collaborative text editing (character-level sequence CRDT)
+* docs: added example for `SynkText`
+
 # 0.1.0-dev.5
 
 * docs: add a flutter demo app for showcase
