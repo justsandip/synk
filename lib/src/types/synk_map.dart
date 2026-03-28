@@ -13,17 +13,10 @@ class SynkMap {
   ///
   /// Creates a new [SynkMap] attached to the given [doc] with a unique [name].
   SynkMap(this.doc, this.name) {
-    void process(Item item) {
-      if (item.parentKey != null && item.parentKey!.startsWith('$name:')) {
-        _applyRemoteItem(item);
-      }
-    }
-
-    doc.listen(process);
-
+    doc.addListener(_processItem);
     // Apply existing history
     for (final clientItems in doc.store.values) {
-      clientItems.forEach(process);
+      clientItems.forEach(_processItem);
     }
   }
 
@@ -35,6 +28,12 @@ class SynkMap {
 
   // Internally stores the active Item for each key.
   final Map<String, Item> _data = {};
+
+  void _processItem(Item item) {
+    if (item.parentKey != null && item.parentKey!.startsWith('$name:')) {
+      _applyRemoteItem(item);
+    }
+  }
 
   void _applyRemoteItem(Item item) {
     final key = item.parentKey!.substring(name.length + 1);
@@ -64,6 +63,11 @@ class SynkMap {
     } else {
       _data[key] = item;
     }
+  }
+
+  /// Disposes the [SynkMap] instance.
+  void dispose() {
+    doc.removeListener(_processItem);
   }
 
   /// Sets a [key] to a new [value].

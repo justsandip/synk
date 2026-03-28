@@ -133,5 +133,21 @@ void main() {
       expect(map.toMap(), equals({'theme': 'light'}));
       expect(text.text, equals('Hello'));
     });
+
+    test('dispose() correctly unregisters listeners', () {
+      final doc = SynkDoc();
+      final map = SynkMap(doc, 'settings');
+
+      map.set('theme', 'dark');
+      expect(map.get('theme'), equals('dark'));
+
+      map.dispose();
+
+      // This update should NOT be processed by the disposed map
+      map.set('theme', 'light');
+
+      // It should still have the old value because the listener was removed
+      expect(map.get('theme'), equals('dark'));
+    });
   });
 }

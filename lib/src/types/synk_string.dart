@@ -10,19 +10,10 @@ import 'package:synk/synk.dart';
 class SynkString {
   /// {@macro synk_string}
   SynkString(this.doc, this.name) {
-    doc.listen((item) {
-      if (item.parentKey == name) {
-        _applyRemoteItem(item);
-      }
-    });
-
+    doc.addListener(_processItem);
     // Apply existing history
     for (final clientItems in doc.store.values) {
-      for (final item in clientItems) {
-        if (item.parentKey == name) {
-          _applyRemoteItem(item);
-        }
-      }
+      clientItems.forEach(_processItem);
     }
   }
 
@@ -33,6 +24,12 @@ class SynkString {
   final String name;
 
   Item? _activeItem;
+
+  void _processItem(Item item) {
+    if (item.parentKey == name) {
+      _applyRemoteItem(item);
+    }
+  }
 
   void _applyRemoteItem(Item item) {
     if (item.content is! String) return;
@@ -50,6 +47,11 @@ class SynkString {
     } else {
       _activeItem = item;
     }
+  }
+
+  /// Disposes the [SynkString] instance.
+  void dispose() {
+    doc.removeListener(_processItem);
   }
 
   /// Sets the register to a new [value].

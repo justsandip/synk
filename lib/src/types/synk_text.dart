@@ -17,12 +17,7 @@ class SynkText {
   ///
   /// Creates a new [SynkText] named [name] attached to [doc].
   SynkText(this.doc, this.name) {
-    doc.listen((item) {
-      if (item.parentKey == name) {
-        _integrate(item);
-      }
-    });
-
+    doc.addListener(_processItem);
     _replayExisting();
   }
 
@@ -40,6 +35,12 @@ class SynkText {
   final Set<ID> _integrated = {};
 
   // ── Internals ────────────────────────────────────────────────────────────
+
+  void _processItem(Item item) {
+    if (item.parentKey == name) {
+      _integrate(item);
+    }
+  }
 
   void _replayExisting() {
     // Collect all items that belong to this list.
@@ -155,6 +156,11 @@ class SynkText {
   }
 
   // ── Public API ────────────────────────────────────────────────────────────
+
+  /// Disposes the [SynkText] instance.
+  void dispose() {
+    doc.removeListener(_processItem);
+  }
 
   /// Inserts a string [value] at character [index] in the active text sequence.
   ///

@@ -59,5 +59,21 @@ void main() {
       final counter2 = SynkInt(doc, 'likes');
       expect(counter2.value, equals(42));
     });
+
+    test('dispose() correctly unregisters listeners', () {
+      final doc = SynkDoc();
+      final counter = SynkInt(doc, 'score');
+
+      counter.increment(42);
+      expect(counter.value, equals(42));
+
+      counter.dispose();
+
+      // This update should NOT be processed by the disposed map
+      counter.increment(100);
+
+      // It should still have the old value because the listener was removed
+      expect(counter.value, equals(42));
+    });
   });
 }

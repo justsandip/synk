@@ -286,5 +286,22 @@ void main() {
 
       expect(list.toList(), equals(['first', 'second']));
     });
+
+    test('dispose() correctly unregisters listeners', () {
+      final doc = SynkDoc();
+      final list = SynkList(doc, 'items');
+
+      list.append('A');
+      list.append('B');
+      expect(list.toList(), equals(['A', 'B']));
+
+      list.dispose();
+
+      // This update should NOT be processed by the disposed map
+      list.append('C');
+
+      // It should still have the old value because the listener was removed
+      expect(list.toList(), equals(['A', 'B']));
+    });
   });
 }

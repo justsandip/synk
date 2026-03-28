@@ -303,5 +303,21 @@ void main() {
       expect(itemZ.leftOrigin, equals(itemA.id));
       expect(itemZ.rightOrigin, equals(itemC.id));
     });
+
+    test('dispose() correctly unregisters listeners', () {
+      final doc = SynkDoc();
+      final text = SynkText(doc, 'body');
+
+      text.insert(0, 'Hello');
+      expect(text.text, equals('Hello'));
+
+      text.dispose();
+
+      // This update should NOT be processed by the disposed map
+      text.insert(0, 'Goodbye');
+
+      // It should still have the old value because the listener was removed
+      expect(text.text, equals('Hello'));
+    });
   });
 }

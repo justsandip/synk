@@ -36,8 +36,13 @@ class SynkDoc {
   final List<void Function(Item)> _listeners = [];
 
   /// Adds a listener that triggers whenever a new item is integrated.
-  void listen(void Function(Item) listener) {
+  void addListener(void Function(Item) listener) {
     _listeners.add(listener);
+  }
+
+  /// Removes a listener.
+  void removeListener(void Function(Item) listener) {
+    _listeners.remove(listener);
   }
 
   /// Adds a new item to the document's global store and notifies data types.
