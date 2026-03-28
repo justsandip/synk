@@ -11,28 +11,44 @@ import 'package:synk/synk.dart';
 class SynkMap {
   /// {@macro synk_map}
   ///
-  /// Creates a new [SynkMap] attached to the given [doc].
-  SynkMap(this.doc) {
-    doc.listen((item) {
-      // Filter out items that don't belong to a map (no key),
-      // and only process those integrated from remote transactions
-      // (local ones are processed directly in `set`).
-      // For simplicity, we process all map items. If they are already the
-      // active item, they just replace themselves redundantly.
-      if (item.parentKey != null) {
+  /// Creates a new [SynkMap] attached to the given [doc] with a unique [name].
+  SynkMap(this.doc, this.name) {
+    void process(Item item) {
+      if (item.parentKey != null && item.parentKey!.startsWith('$name:')) {
         _applyRemoteItem(item);
       }
-    });
+    }
+
+    doc.listen(process);
+
+    // Apply existing history
+    for (final clientItems in doc.store.values) {
+      clientItems.forEach(process);
+    }
   }
 
   /// The document this map belongs to.
   final SynkDoc doc;
 
+  /// The unique key name of this map in the document.
+  final String name;
+
   // Internally stores the active Item for each key.
   final Map<String, Item> _data = {};
 
   void _applyRemoteItem(Item item) {
-    final key = item.parentKey!;
+    final key = item.parentKey!.substring(name.length + 1);
+
+    if (item.deleted) {
+      if (item.leftOrigin != null) {
+        final existingItem = _data[key];
+        if (existingItem != null && existingItem.id == item.leftOrigin) {
+          existingItem.delete();
+        }
+      }
+      return;
+    }
+
     final existingItem = _data[key];
 
     if (existingItem != null) {
@@ -59,7 +75,7 @@ class SynkMap {
       final id = txn.getNextId();
       final item = Item(
         id: id,
-        parentKey: key,
+        parentKey: '$name:$key',
         content: value,
       );
 
@@ -96,7 +112,7 @@ class SynkMap {
         // the target, making the delete operation fully replicable.
         final marker = Item(
           id: txn.getNextId(),
-          parentKey: key,
+          parentKey: '$name:$key',
           content: null,
           leftOrigin: existingItem.id,
           deleted: true,
