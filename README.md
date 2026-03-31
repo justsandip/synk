@@ -36,9 +36,7 @@ The collaborative data structures you attach to a doc are:
 - [SynkList](#synklist)
 - [SynkText](#synktext)
 - [SynkInt](#synkint)
-- [SynkString](#synkstring)
-- [SynkBool](#synkbool)
-- [SynkDouble](#synkdouble)
+- [SynkValue<T>](#synkvaluet)
 
 ### Creating a document
 
@@ -121,45 +119,31 @@ counter.value;           // 8
 
 > Full example - [`example/synk_int_example.dart`](example/synk_int_example.dart)
 
-### `SynkString`
+### `SynkValue<T>`
 
-A single-value string register. Concurrent writes are resolved deterministically via LWW — the write with the higher logical clock wins. If clocks tie, the higher `clientId` wins.
+A generic single-value collaborative register. Concurrent writes are resolved deterministically via LWW — the write with the higher logical clock wins. If clocks tie, the higher `clientId` wins.
+
+`SynkValue` supports generic JSON-serializable primitives like `String`, `num`, and `bool`. If the value has not been set yet, it returns `null`.
 
 ```dart
-final title = SynkString(doc, 'title');
-
+// A collaborative string
+final title = SynkValue<String>(doc, 'title');
+title.value; // null
 title.set('Hello, World!');
 title.value; // 'Hello, World!'
-```
 
-> Full example - [`example/synk_string_example.dart`](example/synk_string_example.dart)
-
-### `SynkBool`
-
-Same LWW semantics as `SynkString`, with an extra `toggle()` helper.
-
-```dart
-final flag = SynkBool(doc, 'isPublished');
-
+// A collaborative boolean
+final flag = SynkValue<bool>(doc, 'isPublished');
 flag.set(true);
-flag.toggle();
-flag.value; // false
-```
+flag.value; // true
 
-> Full example - [`example/synk_bool_example.dart`](example/synk_bool_example.dart)
-
-### `SynkDouble`
-
-Same LWW semantics as `SynkString`. JSON-safe: integer payloads from the wire are cast to `double` transparently.
-
-```dart
-final price = SynkDouble(doc, 'price');
-
+// A collaborative double
+final price = SynkValue<double>(doc, 'price');
 price.set(9.99);
 price.value; // 9.99
 ```
 
-> Full example - [`example/synk_double_example.dart`](example/synk_double_example.dart)
+> Full example - [`example/synk_value_example.dart`](example/synk_value_example.dart)
 
 ## Syncing Between Peers
 
