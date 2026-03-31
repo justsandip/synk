@@ -1,3 +1,5 @@
+// ignore_for_file: cascade_invocations
+
 import 'package:synk/synk.dart';
 import 'package:test/test.dart';
 
@@ -27,6 +29,103 @@ void main() {
       });
 
       expect(ran, isTrue);
+    });
+
+    test('item listeners fire immediately per-item inside a transaction', () {
+      final doc = SynkDoc(clientId: 1);
+      var itemCount = 0;
+
+      doc.addListener((_) => itemCount++);
+
+      doc.transact((txn) {
+        doc.addItem(Item(id: txn.getNextId(), content: 'a', parentKey: 'x'));
+        expect(itemCount, equals(1)); // Fires immediately
+
+        doc.addItem(Item(id: txn.getNextId(), content: 'b', parentKey: 'x'));
+        expect(itemCount, equals(2)); // Fires immediately again
+      });
+
+      expect(itemCount, equals(2));
+    });
+
+    test('transaction listeners fire once after transact() completes', () {
+      final doc = SynkDoc(clientId: 1);
+      var transactionCount = 0;
+      var keys = <String>{};
+
+      doc.addTransactionListener((txn) {
+        transactionCount++;
+        keys = txn.mutatedKeys;
+      });
+
+      doc.transact((txn) {
+        doc.addItem(
+          Item(id: txn.getNextId(), content: 'a', parentKey: 'title'),
+        );
+        doc.addItem(
+          Item(id: txn.getNextId(), content: 'b', parentKey: 'likes'),
+        );
+        doc.addItem(
+          Item(id: txn.getNextId(), content: 'c', parentKey: 'title'),
+        );
+
+        // Transaction listener should NOT have fired yet
+        expect(transactionCount, equals(0));
+      });
+
+      // Now it fires — exactly once
+      expect(transactionCount, equals(1));
+      // And it tracked the keys!
+      expect(keys, containsAll(['title', 'likes']));
+      expect(keys.length, equals(2));
+    });
+
+    test('nested transactions only fire transaction listeners once', () {
+      final doc = SynkDoc(clientId: 1);
+      var transactionCount = 0;
+
+      doc.addTransactionListener((_) => transactionCount++);
+
+      doc.transact((outerTxn) {
+        doc.addItem(
+          Item(id: outerTxn.getNextId(), content: 'a', parentKey: 'x'),
+        );
+
+        // Nested transaction
+        doc.transact((innerTxn) {
+          doc.addItem(
+            Item(id: innerTxn.getNextId(), content: 'b', parentKey: 'x'),
+          );
+          expect(transactionCount, equals(0));
+        });
+
+        // Still inside the outer transaction — should not have fired
+        expect(transactionCount, equals(0));
+      });
+
+      // Only fires once for the outermost transaction
+      expect(transactionCount, equals(1));
+    });
+
+    test('removeTransactionListener stops notifications', () {
+      final doc = SynkDoc(clientId: 1);
+      var count = 0;
+
+      void onTransact(Transaction txn) => count++;
+
+      doc.addTransactionListener(onTransact);
+
+      doc.transact((txn) {
+        doc.addItem(Item(id: txn.getNextId(), content: 'a', parentKey: 'x'));
+      });
+      expect(count, equals(1));
+
+      doc.removeTransactionListener(onTransact);
+
+      doc.transact((txn) {
+        doc.addItem(Item(id: txn.getNextId(), content: 'b', parentKey: 'x'));
+      });
+      expect(count, equals(1)); // Did NOT increment
     });
   });
 
