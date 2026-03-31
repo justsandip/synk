@@ -61,7 +61,7 @@ All shared types are attached to a `SynkDoc` with a unique `name` key. Two peers
 A collaborative map (key-value store) that resolves concurrent writes using Last-Writer-Wins (LWW).
 
 ```dart
-final map = SynkMap(doc);
+final map = SynkMap(doc, 'settings');
 
 map.set('theme', 'dark');
 map.get('theme');          // 'dark'
