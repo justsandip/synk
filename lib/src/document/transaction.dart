@@ -17,6 +17,14 @@ class Transaction {
   /// The document this transaction is modifying.
   final SynkDoc doc;
 
+  /// Keeps track of the `parentKey` (the name of the shared type) for every
+  /// item that was added or modified during this transaction.
+  ///
+  /// This is used by external listeners to avoid unnecessary rebuilds. For
+  /// example, if a `SynkList` named "todos" was the only thing modified,
+  /// a `SynkText` named "title" shouldn't emit a stream event.
+  final Set<String> mutatedKeys = {};
+
   /// Generates the next available [ID] for the local document's client.
   ///
   /// This methods consults the document's [StateVector] to find the latest
