@@ -1,3 +1,11 @@
+# 0.1.0-dev.8
+
+* feat: add doc listeners, data types dispose ([#16](https://github.com/justsandip/synk/pull/16))
+* refactor: optimize length calculation for list, text ([#17](https://github.com/justsandip/synk/pull/17))
+* feat: implement transaction batching, mutation tracking ([#18](https://github.com/justsandip/synk/pull/18))
+* refactor: [BREAKING CHANGE] unify primitives into generic SynkValue<T> ([#19](https://github.com/justsandip/synk/pull/19))
+* docs: fix SynkMap constructor in README ([#20](https://github.com/justsandip/synk/pull/20))
+
 # 0.1.0-dev.7
 
 * fix(SynkMap): delete syncs correctly across peers ([#12](https://github.com/justsandip/synk/pull/12))
