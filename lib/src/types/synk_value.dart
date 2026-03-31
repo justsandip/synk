@@ -6,7 +6,7 @@ import 'package:synk/synk.dart';
 /// [SynkValue] implements a Last-Writer-Wins (LWW) Register.
 /// When two users modify the generic value `T` concurrently, the one with the
 /// higher logical clock (or client ID tie-breaker) wins.
-/// 
+///
 /// Supported generic types include standard JSON-serializable types:
 /// `String`, `num` (and `double`), and `bool`.
 /// {@endtemplate}
@@ -71,12 +71,12 @@ class SynkValue<T> {
   T? get value {
     final item = _activeItem;
     if (item == null || item.deleted) return null;
-    
+
     // Type casting logic for numbers as JSON encodes them lossily
     if (T == double && item.content is int) {
       return (item.content as int).toDouble() as T;
     }
-    
+
     return item.content as T;
   }
 }

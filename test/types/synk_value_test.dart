@@ -23,7 +23,7 @@ void main() {
       SynkProtocol.applyUpdate(doc2, update1);
       SynkProtocol.applyUpdate(doc1, update2);
 
-      // Both should resolve to 'Beta' because Doc 2 has the higher clientId 
+      // Both should resolve to 'Beta' because Doc 2 has the higher clientId
       // when clocks are completely equal (clock 0 relative to their own state).
       expect(title1.value, equals('Beta'));
       expect(title2.value, equals('Beta'));
@@ -56,7 +56,7 @@ void main() {
       expect(flag.value, isNull);
 
       flag.set(false); // Clock 0
-      flag.set(true);  // Clock 1
+      flag.set(true); // Clock 1
       expect(flag.value, isTrue);
 
       // Simulate a highly delayed packet from a completely different doc
@@ -78,7 +78,9 @@ void main() {
     test('initialize with historic data', () {
       final doc = SynkDoc(clientId: 1);
       doc.transact((txn) {
-        doc.addItem(Item(id: txn.getNextId(), content: 100, parentKey: 'price'));
+        doc.addItem(
+          Item(id: txn.getNextId(), content: 100, parentKey: 'price'),
+        );
       });
 
       // Initializes after the item is already present
@@ -107,11 +109,13 @@ void main() {
 
       // Simulate a remote item where a double was encoded as an int in JSON
       doc.transact((txn) {
-        doc.addItem(Item(
-          id: const ID(2, 0),
-          parentKey: 'opacity',
-          content: 1, // Int content
-        ));
+        doc.addItem(
+          Item(
+            id: const ID(2, 0),
+            parentKey: 'opacity',
+            content: 1, // Int content
+          ),
+        );
       });
 
       expect(opacity.value, isA<double>());
