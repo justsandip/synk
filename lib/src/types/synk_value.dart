@@ -1,13 +1,18 @@
 import 'package:synk/synk.dart';
 
-/// {@template synk_double}
-/// A collaborative single-value double (floating-point) register.
+/// {@template synk_value}
+/// A collaborative single-value register.
 ///
-/// [SynkDouble] implements a Last-Writer-Wins (LWW) Register.
+/// [SynkValue] implements a Last-Writer-Wins (LWW) Register.
+/// When two users modify the generic value `T` concurrently, the one with the
+/// higher logical clock (or client ID tie-breaker) wins.
+/// 
+/// Supported generic types include standard JSON-serializable types:
+/// `String`, `num` (and `double`), and `bool`.
 /// {@endtemplate}
-class SynkDouble {
-  /// {@macro synk_double}
-  SynkDouble(this.doc, this.name) {
+class SynkValue<T> {
+  /// {@macro synk_value}
+  SynkValue(this.doc, this.name) {
     doc.addListener(_processItem);
     // Apply existing history
     for (final clientItems in doc.store.values) {
@@ -30,8 +35,6 @@ class SynkDouble {
   }
 
   void _applyRemoteItem(Item item) {
-    if (item.content is! num) return; // double or int
-
     final existing = _activeItem;
     if (existing != null) {
       final a = item.id;
@@ -47,13 +50,13 @@ class SynkDouble {
     }
   }
 
-  /// Disposes the [SynkDouble] instance.
+  /// Disposes the [SynkValue] instance.
   void dispose() {
     doc.removeListener(_processItem);
   }
 
   /// Sets the register to a new [value].
-  void set(double value) {
+  void set(T value) {
     doc.transact((txn) {
       final item = Item(
         id: txn.getNextId(),
@@ -64,10 +67,16 @@ class SynkDouble {
     });
   }
 
-  /// Gets the current resolved value. Returns 0 if unset.
-  double get value {
+  /// Gets the current resolved value.
+  T? get value {
     final item = _activeItem;
-    if (item == null || item.deleted) return 0;
-    return (item.content as num).toDouble();
+    if (item == null || item.deleted) return null;
+    
+    // Type casting logic for numbers as JSON encodes them lossily
+    if (T == double && item.content is int) {
+      return (item.content as int).toDouble() as T;
+    }
+    
+    return item.content as T;
   }
 }
