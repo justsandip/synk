@@ -1,4 +1,4 @@
-// ignore_for_file: cascade_invocations, prefer_int_literals
+// ignore_for_file: cascade_invocations
 
 import 'package:synk/synk.dart';
 import 'package:test/test.dart';
