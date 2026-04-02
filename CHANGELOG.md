@@ -1,3 +1,7 @@
+# 0.1.0-dev.9
+
+* feat: add batched reactive streams to shared types ([#22](https://github.com/justsandip/synk/pull/22))
+
 # 0.1.0-dev.8
 
 * feat: add doc listeners, data types dispose ([#16](https://github.com/justsandip/synk/pull/16))
