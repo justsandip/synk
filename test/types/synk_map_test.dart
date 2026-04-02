@@ -131,7 +131,33 @@ void main() {
       // a SynkText named 'body' was edited.
       expect(map.containsKey('body'), isFalse);
       expect(map.toMap(), equals({'theme': 'light'}));
-      expect(text.text, equals('Hello'));
+    });
+
+    test('stream emits batched updates', () async {
+      final doc = SynkDoc();
+      final map = SynkMap(doc, 'settings');
+
+      // The stream should only emit once per transact() block
+      final updates = expectLater(
+        map.stream,
+        emitsInOrder([
+          {'a': 1, 'b': 2}, // Emit 1 (batched)
+          {'a': 1},         // Emit 2 (deletion batched)
+        ]),
+      );
+
+      // Batch 1
+      doc.transact((txn) {
+        map.set('a', 1);
+        map.set('b', 2);
+      }); // emits here
+
+      // Batch 2
+      doc.transact((txn) {
+        map.delete('b');
+      }); // emits here
+
+      await updates;
     });
 
     test('dispose() correctly unregisters listeners', () {

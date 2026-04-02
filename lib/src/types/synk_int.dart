@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:synk/synk.dart';
 
 /// {@template synk_int}
@@ -10,7 +12,9 @@ import 'package:synk/synk.dart';
 class SynkInt {
   /// {@macro synk_int}
   SynkInt(this.doc, this.name) {
-    doc.addListener(_processItem);
+    doc
+      ..addListener(_processItem)
+      ..addTransactionListener(_processTransaction);
     // Compute initial value from existing items in case this type
     // is instantiated after items were already synced.
     for (final clientItems in doc.store.values) {
@@ -26,15 +30,32 @@ class SynkInt {
 
   int _value = 0;
 
+  // Stream controller for reactive state updates
+  final StreamController<int> _streamController = 
+      StreamController<int>.broadcast();
+
+  /// A stream that emits the counter's fully resolved state after every 
+  /// completed transaction that modifies it.
+  Stream<int> get stream => _streamController.stream;
+
   void _processItem(Item item) {
     if (item.parentKey == name && item.content is int) {
       _value += item.content as int;
     }
   }
 
+  void _processTransaction(Transaction txn) {
+    if (txn.mutatedKeys.contains(name)) {
+      _streamController.add(value);
+    }
+  }
+
   /// Disposes the [SynkInt] instance.
   void dispose() {
-    doc.removeListener(_processItem);
+    doc
+      ..removeListener(_processItem)
+      ..removeTransactionListener(_processTransaction);
+    _streamController.close();
   }
 
   /// The current sum of all increments and decrements.

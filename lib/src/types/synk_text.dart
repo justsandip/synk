@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:synk/synk.dart';
 
 /// {@template synk_text}
@@ -17,7 +19,9 @@ class SynkText {
   ///
   /// Creates a new [SynkText] named [name] attached to [doc].
   SynkText(this.doc, this.name) {
-    doc.addListener(_processItem);
+    doc
+      ..addListener(_processItem)
+      ..addTransactionListener(_processTransaction);
     _replayExisting();
   }
 
@@ -36,6 +40,14 @@ class SynkText {
 
   // Cache for the length of the sequence (number of non-deleted characters).
   int _length = 0;
+
+  // Stream controller for reactive state updates
+  final StreamController<String> _streamController = 
+      StreamController<String>.broadcast();
+
+  /// A stream that emits the text's fully resolved state after every 
+  /// completed transaction that modifies it.
+  Stream<String> get stream => _streamController.stream;
 
   // ── Internals ────────────────────────────────────────────────────────────
 
@@ -164,9 +176,18 @@ class SynkText {
 
   // ── Public API ────────────────────────────────────────────────────────────
 
-  /// Disposes the [SynkText] instance.
+  void _processTransaction(Transaction txn) {
+    if (txn.mutatedKeys.contains(name)) {
+      _streamController.add(text);
+    }
+  }
+
+  /// Disposes the [SynkText] instance to prevent memory leaks.
   void dispose() {
-    doc.removeListener(_processItem);
+    doc
+      ..removeListener(_processItem)
+      ..removeTransactionListener(_processTransaction);
+    _streamController.close();
   }
 
   /// Inserts a string [value] at character [index] in the active text sequence.

@@ -75,5 +75,29 @@ void main() {
       // It should still have the old value because the listener was removed
       expect(counter.value, equals(42));
     });
+
+    test('stream emits batched updates', () async {
+      final doc = SynkDoc();
+      final counter = SynkInt(doc, 'score');
+
+      final updates = expectLater(
+        counter.stream,
+        emitsInOrder([
+          15, // Emit 1: +10 + 5 
+          12, // Emit 2: -3
+        ]),
+      );
+
+      doc.transact((txn) {
+        counter.increment(10);
+        counter.increment(5);
+      });
+
+      doc.transact((txn) {
+        counter.decrement(3);
+      });
+
+      await updates;
+    });
   });
 }
