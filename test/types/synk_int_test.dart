@@ -83,7 +83,7 @@ void main() {
       final updates = expectLater(
         counter.stream,
         emitsInOrder([
-          15, // Emit 1: +10 + 5 
+          15, // Emit 1: +10 + 5
           12, // Emit 2: -3
         ]),
       );

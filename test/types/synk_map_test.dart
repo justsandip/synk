@@ -142,7 +142,7 @@ void main() {
         map.stream,
         emitsInOrder([
           {'a': 1, 'b': 2}, // Emit 1 (batched)
-          {'a': 1},         // Emit 2 (deletion batched)
+          {'a': 1}, // Emit 2 (deletion batched)
         ]),
       );
 

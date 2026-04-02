@@ -31,10 +31,10 @@ class SynkInt {
   int _value = 0;
 
   // Stream controller for reactive state updates
-  final StreamController<int> _streamController = 
+  final StreamController<int> _streamController =
       StreamController<int>.broadcast();
 
-  /// A stream that emits the counter's fully resolved state after every 
+  /// A stream that emits the counter's fully resolved state after every
   /// completed transaction that modifies it.
   Stream<int> get stream => _streamController.stream;
 

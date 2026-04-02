@@ -34,10 +34,10 @@ class SynkMap {
   final Map<String, Item> _data = {};
 
   // Stream controller for reactive state updates
-  final StreamController<Map<String, dynamic>> _streamController = 
+  final StreamController<Map<String, dynamic>> _streamController =
       StreamController<Map<String, dynamic>>.broadcast();
 
-  /// A stream that emits the map's fully resolved state after every 
+  /// A stream that emits the map's fully resolved state after every
   /// completed transaction that modifies it.
   Stream<Map<String, dynamic>> get stream => _streamController.stream;
 
@@ -91,7 +91,7 @@ class SynkMap {
   }
 
   /// Disposes the [SynkMap] instance.
-  /// 
+  ///
   /// Remember to call this to prevent memory leaks.
   void dispose() {
     doc

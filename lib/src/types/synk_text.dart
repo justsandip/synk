@@ -42,10 +42,10 @@ class SynkText {
   int _length = 0;
 
   // Stream controller for reactive state updates
-  final StreamController<String> _streamController = 
+  final StreamController<String> _streamController =
       StreamController<String>.broadcast();
 
-  /// A stream that emits the text's fully resolved state after every 
+  /// A stream that emits the text's fully resolved state after every
   /// completed transaction that modifies it.
   Stream<String> get stream => _streamController.stream;
 

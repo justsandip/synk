@@ -311,8 +311,8 @@ void main() {
       final updates = expectLater(
         list.stream,
         emitsInOrder([
-          ['A', 'B'],       // Emit 1 (batched inserts)
-          ['A', 'C', 'B'],  // Emit 2 (single insert)
+          ['A', 'B'], // Emit 1 (batched inserts)
+          ['A', 'C', 'B'], // Emit 2 (single insert)
         ]),
       );
 

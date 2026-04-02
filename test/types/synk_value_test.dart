@@ -129,7 +129,7 @@ void main() {
       final updates = expectLater(
         flag.stream,
         emitsInOrder([
-          true,  // Only emits the final value of the transaction
+          true, // Only emits the final value of the transaction
           false,
         ]),
       );

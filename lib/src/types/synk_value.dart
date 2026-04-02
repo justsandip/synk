@@ -33,10 +33,10 @@ class SynkValue<T> {
   Item? _activeItem;
 
   // Stream controller for reactive state updates
-  final StreamController<T?> _streamController = 
+  final StreamController<T?> _streamController =
       StreamController<T?>.broadcast();
 
-  /// A stream that emits the register's fully resolved state after every 
+  /// A stream that emits the register's fully resolved state after every
   /// completed transaction that modifies it.
   Stream<T?> get stream => _streamController.stream;
 

@@ -41,10 +41,10 @@ class SynkList {
   int _length = 0;
 
   // Stream controller for reactive state updates
-  final StreamController<List<dynamic>> _streamController = 
+  final StreamController<List<dynamic>> _streamController =
       StreamController<List<dynamic>>.broadcast();
 
-  /// A stream that emits the list's fully resolved state after every 
+  /// A stream that emits the list's fully resolved state after every
   /// completed transaction that modifies it.
   Stream<List<dynamic>> get stream => _streamController.stream;
 

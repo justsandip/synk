@@ -327,8 +327,8 @@ void main() {
       final updates = expectLater(
         text.stream,
         emitsInOrder([
-          'Hi!',    // Emit 1 (batched)
-          'Hi! ',   // Emit 2
+          'Hi!', // Emit 1 (batched)
+          'Hi! ', // Emit 2
         ]),
       );
 
