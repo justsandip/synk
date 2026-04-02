@@ -319,5 +319,32 @@ void main() {
       // It should still have the old value because the listener was removed
       expect(text.text, equals('Hello'));
     });
+
+    test('stream emits batched updates', () async {
+      final doc = SynkDoc();
+      final text = SynkText(doc, 'content');
+
+      final updates = expectLater(
+        text.stream,
+        emitsInOrder([
+          'Hi!', // Emit 1 (batched)
+          'Hi! ', // Emit 2
+        ]),
+      );
+
+      // Batch 1: insert multiple characters
+      doc.transact((txn) {
+        text.insert(0, 'H');
+        text.insert(1, 'i');
+        text.insert(2, '!');
+      });
+
+      // Batch 2
+      doc.transact((txn) {
+        text.append(' ');
+      });
+
+      await updates;
+    });
   });
 }

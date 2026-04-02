@@ -121,5 +121,29 @@ void main() {
       expect(opacity.value, isA<double>());
       expect(opacity.value, equals(1.0));
     });
+
+    test('stream emits batched updates', () async {
+      final doc = SynkDoc();
+      final flag = SynkValue<bool>(doc, 'ready');
+
+      final updates = expectLater(
+        flag.stream,
+        emitsInOrder([
+          true, // Only emits the final value of the transaction
+          false,
+        ]),
+      );
+
+      doc.transact((txn) {
+        flag.set(false);
+        flag.set(true); // Overwrites the previous set in the same batch
+      });
+
+      doc.transact((txn) {
+        flag.set(false);
+      });
+
+      await updates;
+    });
   });
 }

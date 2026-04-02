@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:synk/synk.dart';
 
 /// {@template synk_list}
@@ -16,7 +18,9 @@ class SynkList {
   ///
   /// Creates a new [SynkList] named [name] attached to [doc].
   SynkList(this.doc, this.name) {
-    doc.addListener(_processItem);
+    doc
+      ..addListener(_processItem)
+      ..addTransactionListener(_processTransaction);
     _replayExisting();
   }
 
@@ -35,6 +39,14 @@ class SynkList {
 
   // Cache for the length of the list (number of non-deleted items).
   int _length = 0;
+
+  // Stream controller for reactive state updates
+  final StreamController<List<dynamic>> _streamController =
+      StreamController<List<dynamic>>.broadcast();
+
+  /// A stream that emits the list's fully resolved state after every
+  /// completed transaction that modifies it.
+  Stream<List<dynamic>> get stream => _streamController.stream;
 
   // ── Internals ────────────────────────────────────────────────────────────
 
@@ -163,9 +175,18 @@ class SynkList {
 
   // ── Public API ────────────────────────────────────────────────────────────
 
-  /// Disposes the [SynkList] instance.
+  void _processTransaction(Transaction txn) {
+    if (txn.mutatedKeys.contains(name)) {
+      _streamController.add(toList());
+    }
+  }
+
+  /// Disposes the [SynkList] instance to prevent memory leaks.
   void dispose() {
-    doc.removeListener(_processItem);
+    doc
+      ..removeListener(_processItem)
+      ..removeTransactionListener(_processTransaction);
+    _streamController.close();
   }
 
   /// Inserts [value] at position [index] in the active (visible) list.

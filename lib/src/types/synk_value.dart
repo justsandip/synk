@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:synk/synk.dart';
 
 /// {@template synk_value}
@@ -13,7 +15,9 @@ import 'package:synk/synk.dart';
 class SynkValue<T> {
   /// {@macro synk_value}
   SynkValue(this.doc, this.name) {
-    doc.addListener(_processItem);
+    doc
+      ..addListener(_processItem)
+      ..addTransactionListener(_processTransaction);
     // Apply existing history
     for (final clientItems in doc.store.values) {
       clientItems.forEach(_processItem);
@@ -27,6 +31,14 @@ class SynkValue<T> {
   final String name;
 
   Item? _activeItem;
+
+  // Stream controller for reactive state updates
+  final StreamController<T?> _streamController =
+      StreamController<T?>.broadcast();
+
+  /// A stream that emits the register's fully resolved state after every
+  /// completed transaction that modifies it.
+  Stream<T?> get stream => _streamController.stream;
 
   void _processItem(Item item) {
     if (item.parentKey == name) {
@@ -50,9 +62,18 @@ class SynkValue<T> {
     }
   }
 
+  void _processTransaction(Transaction txn) {
+    if (txn.mutatedKeys.contains(name)) {
+      _streamController.add(value);
+    }
+  }
+
   /// Disposes the [SynkValue] instance.
   void dispose() {
-    doc.removeListener(_processItem);
+    doc
+      ..removeListener(_processItem)
+      ..removeTransactionListener(_processTransaction);
+    _streamController.close();
   }
 
   /// Sets the register to a new [value].

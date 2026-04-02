@@ -303,5 +303,31 @@ void main() {
       // It should still have the old value because the listener was removed
       expect(list.toList(), equals(['A', 'B']));
     });
+
+    test('stream emits batched updates', () async {
+      final doc = SynkDoc();
+      final list = SynkList(doc, 'items');
+
+      final updates = expectLater(
+        list.stream,
+        emitsInOrder([
+          ['A', 'B'], // Emit 1 (batched inserts)
+          ['A', 'C', 'B'], // Emit 2 (single insert)
+        ]),
+      );
+
+      // Batch 1: two appends in a single transaction
+      doc.transact((txn) {
+        list.append('A');
+        list.append('B');
+      });
+
+      // Batch 2: one insert
+      doc.transact((txn) {
+        list.insert(1, 'C');
+      });
+
+      await updates;
+    });
   });
 }

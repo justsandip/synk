@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:synk/synk.dart';
 
 /// {@template synk_map}
@@ -13,7 +15,9 @@ class SynkMap {
   ///
   /// Creates a new [SynkMap] attached to the given [doc] with a unique [name].
   SynkMap(this.doc, this.name) {
-    doc.addListener(_processItem);
+    doc
+      ..addListener(_processItem)
+      ..addTransactionListener(_processTransaction);
     // Apply existing history
     for (final clientItems in doc.store.values) {
       clientItems.forEach(_processItem);
@@ -28,6 +32,14 @@ class SynkMap {
 
   // Internally stores the active Item for each key.
   final Map<String, Item> _data = {};
+
+  // Stream controller for reactive state updates
+  final StreamController<Map<String, dynamic>> _streamController =
+      StreamController<Map<String, dynamic>>.broadcast();
+
+  /// A stream that emits the map's fully resolved state after every
+  /// completed transaction that modifies it.
+  Stream<Map<String, dynamic>> get stream => _streamController.stream;
 
   void _processItem(Item item) {
     if (item.parentKey != null && item.parentKey!.startsWith('$name:')) {
@@ -65,9 +77,27 @@ class SynkMap {
     }
   }
 
+  void _processTransaction(Transaction txn) {
+    var didMutate = false;
+    for (final mutatedKey in txn.mutatedKeys) {
+      if (mutatedKey.startsWith('$name:')) {
+        didMutate = true;
+        break;
+      }
+    }
+    if (didMutate) {
+      _streamController.add(toMap());
+    }
+  }
+
   /// Disposes the [SynkMap] instance.
+  ///
+  /// Remember to call this to prevent memory leaks.
   void dispose() {
-    doc.removeListener(_processItem);
+    doc
+      ..removeListener(_processItem)
+      ..removeTransactionListener(_processTransaction);
+    _streamController.close();
   }
 
   /// Sets a [key] to a new [value].
