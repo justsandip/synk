@@ -1,6 +1,6 @@
 name: synk
 description: An offline-first, conflict-free, shared editing library for Dart.
-version: 0.1.0-dev.8
+version: 0.1.0-dev.9
 repository: https://github.com/justsandip/synk
 issue_tracker: https://github.com/justsandip/synk/issues
 homepage: https://github.com/justsandip/synk
