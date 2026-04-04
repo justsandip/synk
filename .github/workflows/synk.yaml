@@ -1,4 +1,4 @@
-name: ci
+name: synk
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -6,9 +6,15 @@ concurrency:
 
 on:
   push:
+    paths:
+      - "packages/synk/**"
+      - ".github/workflows/synk.yaml"
     branches:
       - main
   pull_request:
+    paths:
+      - "packages/synk/**"
+      - ".github/workflows/synk.yaml"
     branches:
       - main
 
@@ -26,7 +32,9 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
     with:
       dart_sdk: "3.11.0"
+      working_directory: "packages/synk"
 
   pana:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
-
+    with:
+      working_directory: "packages/synk"
