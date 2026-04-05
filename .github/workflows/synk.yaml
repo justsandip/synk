@@ -29,11 +29,57 @@ jobs:
       modified_files_only: false
 
   build:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
-    with:
-      dart_sdk: "3.11.0"
-      working_directory: "packages/synk"
-      setup: "ln -sf ../../.dart_tool .dart_tool"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/synk
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v6
+
+      - name: 🎯 Setup Dart
+        uses: dart-lang/setup-dart@v1.7.2
+        with:
+          sdk: "3.11.0"
+
+      - name: 📦 Install Dependencies
+        run: dart pub get
+        working-directory: .
+
+      - name: ✨ Check Formatting
+        run: dart format --set-exit-if-changed .
+
+      - name: 🕵️ Analyze
+        run: dart analyze --fatal-infos --fatal-warnings lib test
+
+      - name: 🧪 Run Tests
+        run: |
+          dart pub global activate coverage
+          dart pub global run coverage:test_with_coverage
+
+      - name: ⬆️ Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        env:
+          PACKAGE_PATH: packages/synk
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: 📊 Verify Coverage
+        uses: VeryGoodOpenSource/very_good_coverage@v3
+        with:
+          path: packages/synk/coverage/lcov.info
+          min_coverage: 100
+
+      - name: 💯 Verify Pub Score
+        shell: bash
+        run: |
+          dart pub global activate pana
+          sudo apt-get install webp
+          PANA=$(pana . --no-warning); PANA_SCORE=$(echo $PANA | sed -n "s/.*Points: \([0-9]*\)\/\([0-9]*\)./\1\/\2/p")
+          echo $PANA
+          IFS='/'; read -a SCORE_ARR <<< "$PANA_SCORE"; SCORE=SCORE_ARR[0]; TOTAL=SCORE_ARR[1]
+          if [ -z "$1" ]; then MINIMUM_SCORE=TOTAL; else MINIMUM_SCORE=$1; fi
+          if (( $SCORE < $MINIMUM_SCORE )); then echo "minimum score $MINIMUM_SCORE was not met!"; exit 1; fi
 
   pana:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
