@@ -33,6 +33,7 @@ jobs:
     with:
       dart_sdk: "3.11.0"
       working_directory: "packages/synk"
+      setup: "ln -sf ../../.dart_tool .dart_tool"
 
   pana:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
