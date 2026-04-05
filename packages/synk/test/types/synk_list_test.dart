@@ -100,10 +100,7 @@ void main() {
       listA.append('Buy eggs');
 
       // Sync A → B
-      SynkProtocol.applyUpdate(
-        docB,
-        SynkProtocol.encodeStateAsUpdate(docA),
-      );
+      SynkProtocol.applyUpdate(docB, SynkProtocol.encodeStateAsUpdate(docA));
 
       expect(listB.toList(), equals(['Buy milk', 'Buy eggs']));
     });

@@ -65,11 +65,7 @@ class SynkInt {
   void increment([int by = 1]) {
     if (by == 0) return;
     doc.transact((txn) {
-      final item = Item(
-        id: txn.getNextId(),
-        parentKey: name,
-        content: by,
-      );
+      final item = Item(id: txn.getNextId(), parentKey: name, content: by);
       doc.addItem(item);
     });
   }

@@ -9,11 +9,7 @@ import 'package:synk/synk.dart';
 class Decoder {
   /// {@macro decoder}
   Decoder(Uint8List bytes)
-    : _data = ByteData.view(
-        bytes.buffer,
-        bytes.offsetInBytes,
-        bytes.length,
-      );
+    : _data = ByteData.view(bytes.buffer, bytes.offsetInBytes, bytes.length);
 
   final ByteData _data;
   int _offset = 0;

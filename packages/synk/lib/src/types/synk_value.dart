@@ -79,11 +79,7 @@ class SynkValue<T> {
   /// Sets the register to a new [value].
   void set(T value) {
     doc.transact((txn) {
-      final item = Item(
-        id: txn.getNextId(),
-        parentKey: name,
-        content: value,
-      );
+      final item = Item(id: txn.getNextId(), parentKey: name, content: value);
       doc.addItem(item);
     });
   }
