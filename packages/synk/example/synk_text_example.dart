@@ -33,10 +33,7 @@ void main() {
 
   // Sync a common starting point
   textAlice.append('abc');
-  SynkProtocol.applyUpdate(
-    docBob,
-    SynkProtocol.encodeStateAsUpdate(docAlice),
-  );
+  SynkProtocol.applyUpdate(docBob, SynkProtocol.encodeStateAsUpdate(docAlice));
   print('Alice starts with: "${textAlice.text}"');
   print('Bob starts with:   "${textBob.text}"');
 

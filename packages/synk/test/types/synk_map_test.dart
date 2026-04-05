@@ -65,10 +65,7 @@ void main() {
       mapA.set('key', 'value');
 
       // Sync Alice -> Bob
-      SynkProtocol.applyUpdate(
-        docB,
-        SynkProtocol.encodeStateAsUpdate(docA),
-      );
+      SynkProtocol.applyUpdate(docB, SynkProtocol.encodeStateAsUpdate(docA));
       expect(mapB.get('key'), equals('value'));
 
       // Alice deletes 'key'

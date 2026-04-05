@@ -107,11 +107,7 @@ class SynkMap {
   void set(String key, dynamic value) {
     doc.transact((txn) {
       final id = txn.getNextId();
-      final item = Item(
-        id: id,
-        parentKey: '$name:$key',
-        content: value,
-      );
+      final item = Item(id: id, parentKey: '$name:$key', content: value);
 
       // Add to global store.
       // This synchronously triggers the `doc.listen` callback in the

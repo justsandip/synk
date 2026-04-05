@@ -10,12 +10,14 @@ on:
       - main
     paths:
       - "pubspec.yaml"
+      - "packages/synk/pubspec.yaml"
       - ".github/workflows/license_check.yaml"
   push:
     branches:
       - main
     paths:
       - "pubspec.yaml"
+      - "packages/synk/pubspec.yaml"
       - ".github/workflows/license_check.yaml"
 
 jobs:

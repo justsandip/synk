@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/justsandip/synk/actions/workflows/main.yaml/badge.svg)](https://github.com/justsandip/synk/actions/workflows/main.yaml)
 [![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
-[![codecov](https://codecov.io/gh/justsandip/synk/graph/badge.svg?token=3S7K24D5FJ)](https://codecov.io/gh/justsandip/synk)
+[![Test Coverage](coverage_badge.svg)](https://github.com/justsandip/synk/actions)
 [![Pub Package](https://img.shields.io/pub/v/synk.svg)](https://pub.dev/packages/synk)
 
 Synk is an offline-first conflict-free shared editing library for Dart. Multiple peers can edit the same data at the same time and always end up with exactly the same result, without any server deciding who is right.
