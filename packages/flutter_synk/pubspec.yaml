@@ -1,6 +1,10 @@
 name: flutter_synk
 description: Flutter widgets that make it easy to work with Synk. Built to be used along side Synk.
 version: 0.1.0-dev.1
+repository: https://github.com/justsandip/synk
+issue_tracker: https://github.com/justsandip/synk/issues
+homepage: https://github.com/justsandip/synk
+documentation: https://github.com/justsandip/synk
 
 environment:
   sdk: ">=3.11.0 <4.0.0"
