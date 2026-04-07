@@ -9,3 +9,7 @@ updates:
     directory: "/packages/synk"
     schedule:
       interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/flutter_synk"
+    schedule:
+      interval: "daily"

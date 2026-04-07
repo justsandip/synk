@@ -6,3 +6,4 @@ environment:
 
 workspace:
   - packages/synk
+  - packages/flutter_synk
