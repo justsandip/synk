@@ -10,17 +10,17 @@ environment:
 resolution: workspace
 
 dependencies:
+  cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
-  synk: ^0.1.0-dev.9
   flutter_synk:
     path: ../
-  cupertino_icons: ^1.0.8
+  synk: ^0.1.0-dev.9
 
 dev_dependencies:
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
