@@ -1,0 +1,26 @@
+name: example
+description: A flutter example app showcasing the capabilities of synk with the package flutter_synk.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.3
+
+resolution: workspace
+
+dependencies:
+  cupertino_icons: ^1.0.8
+  flutter:
+    sdk: flutter
+  flutter_synk:
+    path: ../
+  synk: ^0.1.0-dev.9
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

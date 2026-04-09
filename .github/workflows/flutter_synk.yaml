@@ -1,0 +1,90 @@
+name: flutter_synk
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    paths:
+      - "packages/flutter_synk/**"
+      - ".github/workflows/flutter_synk.yaml"
+    branches:
+      - main
+  pull_request:
+    paths:
+      - "packages/flutter_synk/**"
+      - ".github/workflows/flutter_synk.yaml"
+    branches:
+      - main
+
+jobs:
+  semantic_pull_request:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
+
+  spell-check:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@v1
+    with:
+      includes: "**/*.md"
+      modified_files_only: false
+
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/flutter_synk
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v6
+
+      - name: 🎯 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.41.5
+
+      - name: 📦 Install Dependencies
+        run: dart pub get
+        working-directory: .
+
+      - name: ✨ Check Formatting
+        run: dart format --set-exit-if-changed .
+
+      - name: 🕵️ Analyze
+        run: dart analyze --fatal-infos --fatal-warnings lib test
+
+      - name: 🧪 Run Tests
+        run: flutter test --coverage
+
+      - name: ⬆️ Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        env:
+          PACKAGE_PATH: packages/flutter_synk
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: 📊 Verify Coverage
+        uses: VeryGoodOpenSource/very_good_coverage@v3
+        with:
+          path: packages/flutter_synk/coverage/lcov.info
+          min_coverage: 100
+
+      - name: 💯 Verify Pub Score
+        shell: bash
+        run: |
+          flutter pub global activate pana
+          sudo apt-get install webp
+          PANA=$(pana . --no-warning)
+          PANA_SCORE=$(echo "$PANA" | sed -n "s/.*Points: \([0-9]*\)\/\([0-9]*\).*/\1\/\2/p")
+          echo "$PANA"
+          IFS='/' read -r -a SCORE_ARR <<< "$PANA_SCORE"
+          SCORE="${SCORE_ARR[0]}"
+          TOTAL="${SCORE_ARR[1]}"
+          if [ -z "$SCORE" ] || [ -z "$TOTAL" ]; then echo "Failed to parse pana score!"; exit 1; fi
+          MINIMUM_SCORE=$TOTAL
+          if (( SCORE < MINIMUM_SCORE )); then echo "minimum score $MINIMUM_SCORE was not met (got $SCORE)!"; exit 1; fi
+
+  pana:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
+    with:
+      working_directory: "packages/flutter_synk"
