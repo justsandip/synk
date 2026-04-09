@@ -8,7 +8,7 @@ documentation: https://github.com/justsandip/synk
 
 environment:
   sdk: ">=3.11.0 <4.0.0"
-  flutter: ^3.41.0
+  flutter: ">=3.0.0"
 
 resolution: workspace
 
