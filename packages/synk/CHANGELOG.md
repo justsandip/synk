@@ -1,3 +1,8 @@
+# 0.2.0
+
+* chore: stable 0.2.0 release 🚀
+* fix: update repository link to point to package subdirectory
+
 # 0.1.0-dev.9
 
 * feat: add batched reactive streams to shared types ([#22](https://github.com/justsandip/synk/pull/22))
