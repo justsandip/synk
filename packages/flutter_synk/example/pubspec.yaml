@@ -5,7 +5,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.11.3
+  sdk: ">=3.11.0 <4.0.0"
 
 resolution: workspace
 
@@ -15,7 +15,7 @@ dependencies:
     sdk: flutter
   flutter_synk:
     path: ../
-  synk:
+  synk: ^0.2.0
 
 dev_dependencies:
   flutter_lints: ^6.0.0
