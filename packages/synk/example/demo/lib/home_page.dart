@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
 
   void _setupSync() {
     // Peer A listens for local changes and broadcasts them
-    _docA.listen((item) {
+    _docA.addTransactionListener((_) {
       if (_syncStatus == SyncStatus.online) {
         final update = SynkProtocol.encodeStateAsUpdate(_docA);
         _channelAtoB.add(update);
@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     // Peer B listens for local changes and broadcasts them
-    _docB.listen((item) {
+    _docB.addTransactionListener((_) {
       if (_syncStatus == SyncStatus.online) {
         final update = SynkProtocol.encodeStateAsUpdate(_docB);
         _channelBtoA.add(update);
@@ -205,18 +205,21 @@ class PeerScreen extends StatefulWidget {
 
 class _PeerScreenState extends State<PeerScreen> {
   final _textController = TextEditingController();
+  late final void Function(Transaction) _listener;
 
   @override
   void initState() {
     super.initState();
     // Rebuild when the document receives an update
-    widget.doc.listen((_) {
+    _listener = (_) {
       if (mounted) setState(() {});
-    });
+    };
+    widget.doc.addTransactionListener(_listener);
   }
 
   @override
   void dispose() {
+    widget.doc.removeTransactionListener(_listener);
     _textController.dispose();
     super.dispose();
   }

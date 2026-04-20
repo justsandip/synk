@@ -6,11 +6,13 @@ version: 1.0.0+1
 environment:
   sdk: ^3.11.3
 
+resolution: workspace
+
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  synk: ^0.1.0-dev.4
+  synk: ^0.2.0
 
 dev_dependencies:
   flutter_test:
