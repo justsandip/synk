@@ -1,6 +1,6 @@
 # Synk
 
-[![Build Status](https://github.com/justsandip/synk/actions/workflows/synk.yaml/badge.svg)](https://github.com/justsandip/synk/actions/workflows/synk.yaml)
+[![Build Status](https://github.com/justsandip/synk/actions/workflows/main.yaml/badge.svg)](https://github.com/justsandip/synk/actions/workflows/main.yaml)
 [![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 [![codecov](https://codecov.io/gh/justsandip/synk/graph/badge.svg?token=3S7K24D5FJ)](https://codecov.io/gh/justsandip/synk)
