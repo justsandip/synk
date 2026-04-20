@@ -75,7 +75,7 @@ jobs:
 
       - name: ⬆️ Upload coverage reports for synk
         if: needs.changes.outputs.synk == 'true'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         env:
           PACKAGE_PATH: packages/synk
         with:
@@ -112,7 +112,7 @@ jobs:
 
       - name: ⬆️ Upload coverage reports for flutter_synk
         if: needs.changes.outputs.flutter_synk == 'true'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         env:
           PACKAGE_PATH: packages/flutter_synk
         with:
