@@ -6,5 +6,6 @@ environment:
 
 workspace:
   - packages/synk
+  - packages/synk/example/demo
   - packages/flutter_synk
   - packages/flutter_synk/example
