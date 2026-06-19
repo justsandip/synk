@@ -28,7 +28,7 @@ jobs:
       synk: ${{ steps.filter.outputs.synk }}
       flutter_synk: ${{ steps.filter.outputs.flutter_synk }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📚 Git Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: 🎯 Setup Flutter
         uses: subosito/flutter-action@v2
