@@ -29,7 +29,7 @@ jobs:
       flutter_synk: ${{ steps.filter.outputs.flutter_synk }}
     steps:
       - uses: actions/checkout@v7
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
@@ -75,7 +75,7 @@ jobs:
 
       - name: ⬆️ Upload coverage reports for synk
         if: needs.changes.outputs.synk == 'true'
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         env:
           PACKAGE_PATH: packages/synk
         with:
@@ -112,7 +112,7 @@ jobs:
 
       - name: ⬆️ Upload coverage reports for flutter_synk
         if: needs.changes.outputs.flutter_synk == 'true'
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         env:
           PACKAGE_PATH: packages/flutter_synk
         with:
